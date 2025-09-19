@@ -1,13 +1,38 @@
-// src/services/movieService.ts
+// // src/services/movieService.ts
+// import axios from "axios";
+// import type { Movie } from "../types/movie";
+
+// const TMDB = axios.create({
+//   baseURL: "https://api.themoviedb.org/3",
+//   headers: {
+//     Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
+//   },
+// });
+
+// export interface SearchMoviesResponse {
+//   page: number;
+//   results: Movie[];
+//   total_pages: number;
+//   total_results: number;
+// }
+
+// export async function fetchMovies(
+//   query: string,
+//   page: number = 1
+// ): Promise<SearchMoviesResponse> {
+//   const { data } = await TMDB.get<SearchMoviesResponse>("/search/movie", {
+//     params: {
+//       query,
+//       include_adult: false,
+//       language: "en-US",
+//       page,
+//     },
+//   });
+//   return data;
+// }
+
 import axios from "axios";
 import type { Movie } from "../types/movie";
-
-const TMDB = axios.create({
-  baseURL: "https://api.themoviedb.org/3",
-  headers: {
-    Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
-  },
-});
 
 export interface SearchMoviesResponse {
   page: number;
@@ -15,6 +40,19 @@ export interface SearchMoviesResponse {
   total_pages: number;
   total_results: number;
 }
+
+const TOKEN = import.meta.env.VITE_TMDB_TOKEN as string | undefined;
+
+if (!TOKEN) {
+  console.error(
+    "[TMDB] Missing VITE_TMDB_TOKEN. Проверь .env локально и переменные на Vercel."
+  );
+}
+
+const TMDB = axios.create({
+  baseURL: "https://api.themoviedb.org/3",
+  headers: TOKEN ? { Authorization: `Bearer ${TOKEN}` } : undefined,
+});
 
 export async function fetchMovies(
   query: string,
